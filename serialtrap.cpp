@@ -8,7 +8,7 @@
 double serialQuad(const double alpha, const double beta, const int N)
 {
 
-	std::cout << "Computing int_0^1 exp(cos(x)) in series with " << N+1 << " grid points...\n";
+	std::cout << "Computing integral in series\n";
 
 	// Set timer start
 	auto start = std::chrono::high_resolution_clock::now();
@@ -25,11 +25,11 @@ double serialQuad(const double alpha, const double beta, const int N)
 
 	// Set timer end, computer duration
 	auto end = std::chrono::high_resolution_clock::now();
-	auto duration = std::chrono::duration_cast<std::chrono::milliseconds > (end - start);
+	auto duration = std::chrono::duration_cast<std::chrono::microseconds > (end - start);
 
 	// Print results to console
 	std::cout << "Integral is approximately: " << std::fixed << std::setprecision(16) << intgrl << "\n";
-	std::cout << "Computed in: " << duration.count() << " (milliseconds)\n\n";
+	std::cout << "Computed in: " << duration.count() << " (microseconds)\n\n";
 
 	return intgrl;
 }
