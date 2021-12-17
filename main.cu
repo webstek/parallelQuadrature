@@ -5,7 +5,6 @@
 // Local Header Files
 #include<paratrap.h>
 #include<serialtrap.h>
-#include<richardsontrap.h>
 
 // TODO determine if there is bug in quadrature locations -> may be fixed 0,beta interval
 
@@ -17,7 +16,7 @@ __global__ void dummy(int n) {
 }
 
 // Number of intervals to compute quadrature on, and number of threads per block
-const int N = 1000;
+const int N = 10000000;
 const int BLOCK_SIZE = 256;
 
 int main(void) {
@@ -28,8 +27,8 @@ int main(void) {
 	std::cout << "Integral of exp(cos(x)) from 0 to 1 with " << N << " intervals...\n\n";
 
 	// Call Parallel and Serial Quadrature schemes. Results in console.
-	double para = parallelQuad(0, 1, N, BLOCK_SIZE);
-	double richardson = richardsonQuad(0, 1, N, BLOCK_SIZE);
+	double para = parallelQuad(0, 1, N);
+	double richardson = richardsonQuad(0, 1, N);
 	double serial = serialQuad(0, 1, N);
 
 	return 0;
