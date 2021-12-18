@@ -2,19 +2,15 @@
 #include<iomanip>
 #include<math.h>
 #include<chrono>
+#include<fstream>
 // CUDA includes
 #include <cuda_runtime.h>
 #include <device_launch_parameters.h>
 #include <cuda.h>
 #include <cuda_runtime_api.h>
 
-
-// TODO: parallelize the array addition, see if it's faster
-
-
 // Number of threads per block
 int BLOCK_SIZE = 256;
-
 
 // GPU code for computing the function values on the grid points
 __global__ void f_eval(double* f, double h, int n)
@@ -27,15 +23,7 @@ __global__ void f_eval(double* f, double h, int n)
 		double x = i * h;
 
 		// compute the function value at x
-		f[i] = exp(cos(x));
-	}
-}
-
-// Parallel sumation with atomicAdd() for array elements indexed 1, N-1...the interior of the array
-__global__ void para_add_interior(float* address, float arr, int N) {
-	int i = blockIdx.x * blockDim.x + threadIdx.x;
-	if (1 <= i < N) {
-		atomicAdd(&address[0], arr);
+		f[i] = sqrt((exp(cos(pow(pow(pow(x, x), x), x)))));
 	}
 }
 
@@ -44,6 +32,8 @@ __global__ void para_add_interior(float* address, float arr, int N) {
 double parallelQuad(const double alpha, const double beta, const int N)
 {
 	std::cout << "Computing integral in parallel\n";
+	std::ofstream myfile;
+	myfile.open("results_time_f2.txt", std::ios_base::app);
 
 	// Set timer start
 	auto start = std::chrono::high_resolution_clock::now();
@@ -76,10 +66,11 @@ double parallelQuad(const double alpha, const double beta, const int N)
 	intgrl *= h;
 	delete[] h_farray;
 
-	// Set timer end, compute duration
+	// Set timer end, compute duration, write to file
 	auto end = std::chrono::high_resolution_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::microseconds> (end - start);
-
+	myfile << duration.count() << ",";
+	myfile.close();
 
 	// Print results to console
 	std::cout << "Integral is approximately: " << std::fixed << std::setprecision(16) << intgrl << "\n";
@@ -93,6 +84,8 @@ double parallelQuad(const double alpha, const double beta, const int N)
 double richardsonQuad(const double alpha, const double beta, const int N)
 {
 	std::cout << "Computing in parallel with Richardson Extrapolation\n";
+	std::ofstream myfile;
+	myfile.open("results_time_f2.txt", std::ios_base::app);
 
 	// Set timer start
 	auto start = std::chrono::high_resolution_clock::now();
@@ -130,9 +123,11 @@ double richardsonQuad(const double alpha, const double beta, const int N)
 	double intgrl = (4 / 3) * (h_upon2 * trap_h_upon2) - (1 / 3) * (h * trap_h);
 	delete[] h_farray;
 
-	// Set timer end, compute duration
+	// Set timer end, compute duration, write to file
 	auto end = std::chrono::high_resolution_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::microseconds> (end - start);
+	myfile << duration.count() << ",";
+	myfile.close();
 
 	// Print results to console
 	std::cout << "Integral is approximately: " << std::fixed << std::setprecision(16) << intgrl << "\n";
